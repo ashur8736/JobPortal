@@ -34,16 +34,21 @@ const Signup = () => {
     }
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();    //formdata object
+    
+        // Simple validation
+        if (!input.fullname || !input.email || !input.phoneNumber || !input.password || !input.role || !input.file) {
+            toast.error("Please fill in all the fields.");
+            return;
+        }
+    
+        const formData = new FormData();
         formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
-        if (input.file) {
-            formData.append("file", input.file);
-        }
-
+        formData.append("file", input.file);
+    
         try {
             dispatch(setLoading(true));
             const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
@@ -56,11 +61,12 @@ const Signup = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
-        } finally{
+            toast.error(error.response?.data?.message || "Something went wrong.");
+        } finally {
             dispatch(setLoading(false));
         }
     }
+    
 
     useEffect(()=>{
         if(user){
